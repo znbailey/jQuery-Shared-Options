@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <script src="jquery.shared.options.js"></script>
+  </head>
+  <body>
+    <form action="#">
+      <p>
+        <label>
+          Dropdown 1
+          <select>
+            <option value="">-- Select One --</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+            <option value="4">Four</option>
+            <option value="5">Five</option>
+          </select>
+        </label>
+      </p>
+      <p>
+        <label>
+          Dropdown 2
+          <select>
+            <option value="">-- Select One --</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+            <option value="4">Four</option>
+            <option value="5">Five</option>
+          </select>
+        </label>
+      </p>
+      <p>
+        <label>
+          Dropdown 3
+          <select>
+            <option value="">-- Select One --</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+            <option value="4">Four</option>
+            <option value="5">Five</option>
+          </select>
+        </label>
+      </p>
+      <p>
+        <label>
+          Dropdown 4
+          <select id="dropdown4">
+            <option value="">-- Select One --</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+            <option value="4" selected="selected">Four</option>
+            <option value="5">Five</option>
+          </select>
+        </label>
+      </p>
+      <input type="submit"/>
+    </form>
+  </body>
+  <script>
+   $('form select').sharedOptions();
+  </script>
+</html>
