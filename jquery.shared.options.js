@@ -3,10 +3,19 @@
   $.fn.sharedOptions = function() {
     var elements = $(this);
     
+    var allOptions = [];$.map
+    elements.first().find('option').each(function(idx, option) {
+      var $option = $(option);
+      var optionValue = $option.attr('value');
+      if ( optionValue ) {
+        allOptions[optionValue] = {'label': $option.text(), 'beforeValue': $option.prev().attr('value'), 'index': idx };
+      }
+    });
+    
     //add change handler to all dropdowns
     elements.change(function(){
       var $this = $(this); //the dropdown that changed
-      var selectedOption = $this.children('option:selected');
+      var selectedOption = $this.find('option:selected');
       var newValue = selectedOption.attr('value');
       var oldValue = $this.data('old-value');
       
@@ -15,23 +24,52 @@
         return true;
       }
       
-      if ( newValue && $.trim(newValue).length !== 0 ) {
-        elements.children('option[value=' + newValue + ']').hide();
+      if ( oldValue && $.trim(oldValue).length !== 0 ) {
+        elements.not($this).each(function(junk, select) {
+          var myIndex = allOptions[oldValue].index;
+          var $select = $(select);
+          $select.find('option').each(function(ignore, option) {
+            var $option = $(option);
+            var optionValue = $option.attr('value');
+            if ( !optionValue || $.trim(optionValue).length === 0 ) {
+              return true;
+            }
+            var $nextOption = $option.next('option');
+            var curIndex = allOptions[optionValue].index;
+            var nextOptionValue;
+            var nextIndex;
+            if ( $nextOption.length ) {
+              nextOptionValue = $nextOption.attr('value');
+              if ( nextOptionValue && $.trim(nextOptionValue).length !== 0 ) {
+                nextIndex = allOptions[nextOptionValue].index;
+              }
+            }
+            if ( myIndex < curIndex ) {
+              $option.before('<option value="' + oldValue + '">' + allOptions[oldValue].label + '</option>');
+              return false;
+            } else if ( !nextIndex || myIndex < nextIndex ) {
+              $option.after('<option value="' + oldValue + '">' + allOptions[oldValue].label + '</option>');
+              return false;
+            }
+          });
+        });
       }
       
-      if ( oldValue && $.trim(oldValue).length !== 0 ) {
-        elements.children('option[value=' + oldValue + ']').show();
+      if ( newValue && $.trim(newValue).length !== 0 ) {
+        elements.not($this).find('option[value=' + newValue + ']').remove();
       }
+      
       $this.data('old-value', newValue);
     });
 
-    //hide selected options
+    //remove selected options
     return elements.each(function(){
       var $this = $(this);
-      var oldValue = $this.children('option:selected').attr('value');
-      if ( oldValue && $.trim(oldValue).length !== 0 ) {
-        $this.data('old-value', oldValue);
-        elements.children('option[value=' + oldValue + ']').hide();
+      var $selected = $this.find('option:selected');
+      var value = $selected.attr('value');
+      if ( value && $.trim(value).length !== 0 ) {
+        $this.data('old-value', value);
+        elements.not($this).find('option[value=' + value + ']').remove();
       }
     });
   };
