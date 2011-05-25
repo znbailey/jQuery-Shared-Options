@@ -3,12 +3,16 @@
   $.fn.sharedOptions = function() {
     var elements = $(this);
     
-    var allOptions = [];$.map
+    var allOptions = [];
+    var $optGroups = elements.first().find('optgroup');
     elements.first().find('option').each(function(idx, option) {
       var $option = $(option);
       var optionValue = $option.attr('value');
       if ( optionValue ) {
         allOptions[optionValue] = {'label': $option.text(), 'beforeValue': $option.prev().attr('value'), 'index': idx };
+        if ( $optGroups.length  ) {
+          allOptions[optionValue].optgroup = $optGroups.index($option.parent('optgroup'));
+        }
       }
     });
     
@@ -28,7 +32,11 @@
         elements.not($this).each(function(junk, select) {
           var myIndex = allOptions[oldValue].index;
           var $select = $(select);
-          $select.find('option').each(function(ignore, option) {
+          var $parent = $optGroups.length > 0 ? 
+            $select.find('optgroup').eq(allOptions[oldValue].optgroup) : $select;
+          var $options = $parent.find('option');
+            
+          $options.each(function(ignore, option) {
             var $option = $(option);
             var optionValue = $option.attr('value');
             if ( !optionValue || $.trim(optionValue).length === 0 ) {
@@ -52,6 +60,9 @@
               return false;
             }
           });
+          if ( !$options.length ) {
+            $parent.append('<option value="' + oldValue + '">' + allOptions[oldValue].label + '</option>');
+          }
         });
       }
       
